@@ -5,10 +5,13 @@ from bs4 import BeautifulSoup
 
 def main_scraping():
     print('Start Scraping')
+
+    # Url to BigC website water category
     url = 'https://www.bigc.co.th/category/water?limit=100&page={0}'
     response = requests.get(url.format(1))
     soup = BeautifulSoup(response.content, 'html.parser')   
-    no_page = len(soup.find('div','pagination_pagination__wJ_sG').find_all('a'))
+
+    no_page = len(soup.find('div','pagination_pagination__wJ_sG').find_all('a')) # Find total Page
     product_name = []
     price = []
     for page in range(1,no_page+1):
@@ -19,7 +22,9 @@ def main_scraping():
             soup = BeautifulSoup(response.content, 'html.parser')
             
         for element in soup.find_all('div','category_result_col__LmuH8'):
+            #Extract product name by div class
             product_name.append(element.find('div','productCard_title__f1ohZ').text)
+            #Extract product price by div class
             price.append(element.find('div','productCard_price__9T3J8').text.split('/')[0].replace('฿',''))
 
     bigC_df = pd.DataFrame(data={'product_name':product_name,
